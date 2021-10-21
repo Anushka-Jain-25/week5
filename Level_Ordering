@@ -1,0 +1,100 @@
+
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+#define Max_Size 500
+struct node{
+    int key;
+    struct node *left,*right;
+};
+
+struct node** createQueue(int*, int*);
+void enQueue(struct node**, int*, struct node*);
+struct node* deQueue(struct node**, int*);
+
+
+struct node *Newnode(int item)
+{
+    struct node *temp= (struct node*)malloc(sizeof(struct node));
+    temp->key=item;
+    temp->left=temp->right= NULL;
+    return temp;
+}
+
+
+struct node *Insert(struct node *node,int key)
+{
+    if(node==NULL)
+        return Newnode(key);
+    if(key%4==0)
+        node->left=Insert(node->left,key);
+    else
+        node->right= Insert(node->right, key);
+    
+    return node;
+}
+
+
+void printLevelOrder(struct node* root)
+{
+    int rear, front;
+    struct node** queue = createQueue(&front, &rear);
+    struct node* temp_node = root;
+ 
+    while (temp_node) {
+        printf("%d ", temp_node->key);
+        if (temp_node->left)
+            enQueue(queue, &rear, temp_node->left);
+        if (temp_node->right)
+            enQueue(queue, &rear, temp_node->right);
+        temp_node = deQueue(queue, &front);
+    }
+}
+
+
+struct node** createQueue(int* front, int* rear)
+{
+    struct node** queue = (struct node**)malloc(
+        sizeof(struct node*) * Max_Size);
+    *front = *rear = 0;
+    return queue;
+}
+
+
+void enQueue(struct node** queue, int* rear,
+             struct node* new_node)
+{
+    queue[*rear] = new_node;
+    (*rear)++;
+} 
+
+
+struct node* deQueue(struct node** queue, int* front)
+{
+    (*front)++;
+    return queue[*front - 1];
+}
+
+
+int main() {
+    int t, n,i,j,a[100];
+    scanf("%d",&t);
+    for(i=1;i<=t;i++)
+    {
+        struct node *root=NULL;
+        scanf("%d",&n);
+        for(j=0;j<n;j++)
+        {
+            scanf("%d",&a[j]);
+        }
+        root= Insert(root,a[0]);
+        for(j=1;j<n; j++)
+            Insert(root, a[j]);
+        
+        printLevelOrder(root);
+        printf("\n");
+        
+    }
+    return 0;
+}
